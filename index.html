@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PBrain Registration</title>
+</head>
+<body>
+
+<h1>PBrain</h1>
+<h2>Create Account</h2>
+
+<form id="registerForm">
+
+    <input type="text" id="name" placeholder="Enter your name" required>
+    <br><br>
+
+    <input type="email" id="email" placeholder="Enter your email" required>
+    <br><br>
+
+    <input type="password" id="password" placeholder="Create password" required>
+    <br><br>
+
+    <button type="submit">Register</button>
+
+</form>
+
+<h3 id="message"></h3>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
+import {
+    getAuth,
+    createUserWithEmailAndPassword
+}
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
+import {
+    getFirestore,
+    doc,
+    setDoc
+}
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+
+
+const firebaseConfig = {
+    apiKey: "AIzaSyB_0gcUpFC2h9ov5eATl-rsOASuDttGkIM",
+    authDomain: "student-project-25311.firebaseapp.com",
+    projectId: "student-project-25311",
+    storageBucket: "student-project-25311.firebasestorage.app",
+    messagingSenderId: "1023989549160",
+    appId: "1:1023989549160:web:c807de054171e2cfe593dd",
+    measurementId: "G-22DQ7QRZFP"
+};
+
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+
+document.getElementById("registerForm").addEventListener("submit", async function(event) {
+
+    event.preventDefault();
+
+    const name = document.getElementById("name").value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const message = document.getElementById("message");
+
+    try {
+
+        const userCredential =
+            await createUserWithEmailAndPassword(
+                auth,
+                email,
+                password
+            );
+
+        const user = userCredential.user;
+
+        await setDoc(doc(db, "users", user.uid), {
+            name: name,
+            email: email,
+            registeredAt: new Date()
+        });
+
+        message.innerText = "✅ Registration Successful!";
+        message.style.color = "green";
+
+        document.getElementById("registerForm").reset();
+
+    } catch (error) {
+
+        message.innerText = "❌ " + error.message;
+        message.style.color = "red";
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>
