@@ -1,0 +1,51 @@
+    apiKey: "AIzaSyB_0gcUpFC2h9ov5eATl-rsOASuDttGkIM",
+    authDomain: "student-project-25311.firebaseapp.com",
+    projectId: "student-project-25311",
+    storageBucket: "student-project-25311.firebasestorage.app",
+    messagingSenderId: "1023989549160",
+    appId: "1:1023989549160:web:c807de054171e2cfe593dd",
+    measurementId: "G-22DQ7QRZFP"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+document.getElementById("registerForm").addEventListener("submit", async function(event) {
+    event.preventDefault();
+
+    const name = document.getElementById("name").value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const message = document.getElementById("message");
+
+    try {
+        const userCredential = await createUserWithEmailAndPassword(
+            auth,
+            email,
+            password
+        );
+
+        const user = userCredential.user;
+
+        await setDoc(doc(db, "users", user.uid), {
+            name: name,
+            email: email,
+            registeredAt: new Date()
+        });
+
+        message.innerText = "✅ Registration Successful!";
+        message.style.color = "green";
+
+        document.getElementById("registerForm").reset();
+
+    } catch (error) {
+        message.innerText = "❌ " + error.message;
+        message.style.color = "red";
+    }
+});
+
+</script>
+
+</body>
+</html>
